@@ -1,0 +1,15 @@
+project : daflib {
+  sharedname = *
+  version = 1.0.0
+  macros += EXAMPLESERVICE_BUILD_DLL
+  prebuild += perl $(ACE_ROOT)/bin/generate_export_file.pl ExampleService > ExampleService_Export.h
+  verbatim(gnuace, top, 1) {
+    CCFLAGS += -std=c++14
+  }
+  Header_Files {
+    ExampleService_Export.h
+  }
+  Source_Files {
+    ExampleService.cpp
+  }
+}

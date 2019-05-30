@@ -1,0 +1,5 @@
+version: '3'
+services:
+  lasagne-bin:
+    build: .
+    image: lasagne-example-service:1.0.0
