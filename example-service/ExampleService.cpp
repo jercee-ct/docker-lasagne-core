@@ -13,10 +13,14 @@ namespace example
 class Service : public DAF::TaskExecutor
 {
 public:
-    Service() :
-        queue_(10)
+    Service() : queue_(10)
     {
         ACE_DEBUG((LM_DEBUG, ACE_TEXT("(%P|%t) ctor\n")));
+    }
+
+    ~Service()
+    {
+        ACE_DEBUG((LM_DEBUG, ACE_TEXT("(%P|%t) dtor\n")));
     }
 
     int init(int, char**) override
@@ -43,13 +47,19 @@ public:
         return 0;
     }
 
+    int fini()
+    {
+        ACE_DEBUG((LM_DEBUG, ACE_TEXT("(%P|%t) fini\n")));
+        return 0;
+    }
+
     int svc() override
     {
         while (isAvailable())
         {
            ACE_DEBUG((LM_DEBUG, ACE_TEXT("(%P|%t) svc\n")));
            auto work = queue_.take();
-           ACE_DEBUG((LM_DEBUG, ACE_TEXT("(%P|%t) work: %d\n"), data));
+           ACE_DEBUG((LM_DEBUG, ACE_TEXT("(%P|%t) work: %d\n"), work));
         }
         return 0;
     }

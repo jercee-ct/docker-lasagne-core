@@ -4,16 +4,21 @@
 
 FROM ubuntu:16.04
 
+# override with `--build-arg LASAGNE_VERSION=develop`
+ARG LASAGNE_VERSION=v1.5.1
+
 # Update package repositories and install build-essential
 
 RUN apt-get update && apt-get install -y build-essential git figlet
 
 # clone LASAGNE-Core and dependencies
 
-RUN git clone --depth 1 -b ACE+TAO-6_4_5 git://github.com/DOCGroup/MPC.git /opt/MPC \
- && git clone --depth 1 -b ACE+TAO-6_4_5 git://github.com/DOCGroup/ACE_TAO.git /opt/ACE_TAO \
- && git clone --depth 1 -b DDS-3.12.1 git://github.com/objectcomputing/OpenDDS.git /opt/OpenDDS \
- && git clone --depth 1 -b v1.5.0 git://github.com/LASAGNE-Open-Systems/LASAGNE-Core.git /opt/DAF
+RUN git clone --depth 1 -b ACE+TAO-6_5_5    git://github.com/DOCGroup/MPC.git /opt/MPC \
+ && git clone --depth 1 -b ACE+TAO-6_5_5    git://github.com/DOCGroup/ACE_TAO.git /opt/ACE_TAO \
+RUN git clone --depth 1 -b ACE+TAO-6_5_5    git://github.com/DOCGroup/MPC.git /opt/MPC \
+ && git clone --depth 1 -b ACE+TAO-6_5_5    git://github.com/DOCGroup/ACE_TAO.git /opt/ACE_TAO \
+ && git clone --depth 1 -b DDS-3.13.2       git://github.com/objectcomputing/OpenDDS.git /opt/OpenDDS \
+ && git clone --depth 1 -b $LASAGNE_VERSION git://github.com/LASAGNE-Open-Systems/LASAGNE-Core.git /opt/DAF
 
 # Setup environment variables
 
@@ -37,10 +42,7 @@ RUN cp $DAF_ROOT/bin/build/ace/config.h $ACE_ROOT/ace/config.h \
  && perl $ACE_ROOT/bin/mwc.pl -type gnuace -workers 2 TAF_CI.mwc \
  && make --jobs 2
 
-# copy TextParser script and execute it
+ENTRYPOINT ["TAFServer"]
 
-WORKDIR $DAF_ROOT/bin
-
-ADD TextParser.sh $DAF_ROOT/bin
-
-CMD bash
+# Override this in user Dockerfile
+CMD ["-TAFServices", "DSTO.conf"]
