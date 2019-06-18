@@ -15,8 +15,6 @@ RUN apt-get update && apt-get install -y build-essential git figlet
 
 RUN git clone --depth 1 -b ACE+TAO-6_5_5    git://github.com/DOCGroup/MPC.git /opt/MPC \
  && git clone --depth 1 -b ACE+TAO-6_5_5    git://github.com/DOCGroup/ACE_TAO.git /opt/ACE_TAO \
-RUN git clone --depth 1 -b ACE+TAO-6_5_5    git://github.com/DOCGroup/MPC.git /opt/MPC \
- && git clone --depth 1 -b ACE+TAO-6_5_5    git://github.com/DOCGroup/ACE_TAO.git /opt/ACE_TAO \
  && git clone --depth 1 -b DDS-3.13.2       git://github.com/objectcomputing/OpenDDS.git /opt/OpenDDS \
  && git clone --depth 1 -b $LASAGNE_VERSION git://github.com/LASAGNE-Open-Systems/LASAGNE-Core.git /opt/DAF
 
