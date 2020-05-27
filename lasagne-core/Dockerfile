@@ -4,8 +4,7 @@
 
 FROM ubuntu:16.04
 
-# override with `--build-arg LASAGNE_VERSION=develop`
-ARG LASAGNE_VERSION=v1.5.1
+ARG LASAGNE_VERSION=develop
 
 # Update package repositories and install build-essential
 
