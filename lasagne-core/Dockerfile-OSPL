@@ -1,0 +1,59 @@
+#
+# Dockerfile for https://github.com/LASAGNE-Open-Systems/LASAGNE-Core
+#
+
+FROM ubuntu:16.04
+
+ARG LASAGNE_VERSION=develop
+
+# Update package repositories and install build-essential
+
+RUN apt-get update && apt-get install -y build-essential git figlet wget
+
+# clone LASAGNE-Core and dependencies
+
+RUN git clone --depth 1 -b ACE+TAO-6_5_5    git://github.com/DOCGroup/MPC.git /opt/MPC \
+ && git clone --depth 1 -b ACE+TAO-6_5_5    git://github.com/DOCGroup/ACE_TAO.git /opt/ACE_TAO \
+ && git clone --depth 1 -b $LASAGNE_VERSION git://github.com/LASAGNE-Open-Systems/LASAGNE-Core.git /opt/DAF
+
+# Download OSPL release and unpack.
+RUN wget https://github.com/ADLINK-IST/opensplice/releases/download/OSPL_V6_9_190925OSS_RELEASE/PXXX-VortexOpenSplice-6.9.190925OSS-HDE-x86.linux-gcc5.4.0-glibc2.23-installer.tar && \
+    tar -C /opt/ -xvf ./PXXX-VortexOpenSplice-6.9.190925OSS-HDE-x86.linux-gcc5.4.0-glibc2.23-installer.tar
+
+# Setup environment variables
+
+ENV MPC_ROOT=/opt/MPC \
+    ACE_ROOT=/opt/ACE_TAO/ACE \
+    TAO_ROOT=/opt/ACE_TAO/TAO \
+    OSPL_HOME=/opt/HDE/x86.linux  \
+    OSPL_URI=file:///$OSPL_HOME/etc/config/ospl.xml \
+    DDS_ROOT=$OSPL_HOME \
+    DAF_ROOT=/opt/DAF
+
+ENV TAF_ROOT=$DAF_ROOT/TAF \
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ACE_ROOT/lib:$DDS_ROOT/lib:$DAF_ROOT/lib \
+    PATH=$PATH:$ACE_ROOT/bin:$DDS_ROOT/bin:$DAF_ROOT/bin
+
+# Modify LASAGNE-Core for OSPL
+RUN sed -i "s/opensplice       = 0/opensplice = 1/g" $DAF_ROOT/MPC/config/TAF.features && \
+    sed -i "s/opendds          = 1/opendds = 0/g" $DAF_ROOT/MPC/config/TAF.features
+
+RUN less $DAF_ROOT/MPC/config/TAF.features
+
+# Set a domain for OSPL
+RUN sed -i "s=<Id>0</Id>=<Id>1</Id>/=g" $OSPL_HOME/etc/config/ospl.xml
+
+# build LASAGNE-Core
+
+WORKDIR $TAF_ROOT
+
+RUN cp $DAF_ROOT/bin/build/ace/config.h $ACE_ROOT/ace/config.h \
+ && cp $DAF_ROOT/bin/build/ace/default.features $ACE_ROOT/bin/MakeProjectCreator/config/default.features \
+ && cp $DAF_ROOT/bin/build/ace/platform_macros.GNU $ACE_ROOT/include/makeinclude/platform_macros.GNU \
+ && perl $ACE_ROOT/bin/mwc.pl -type gnuace -workers 2 TAF_CI.mwc \
+ && make --jobs 2
+
+ENTRYPOINT ["TAFServer"]
+
+# Override this in user Dockerfile
+CMD ["-TAFServices", "DSTO.conf"]
