@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y build-essential git figlet
 RUN git clone --depth 1 -b ACE+TAO-6_5_5    git://github.com/DOCGroup/MPC.git /opt/MPC \
  && git clone --depth 1 -b ACE+TAO-6_5_5    git://github.com/DOCGroup/ACE_TAO.git /opt/ACE_TAO \
  && git clone --depth 1 -b DDS-3.13.2       git://github.com/objectcomputing/OpenDDS.git /opt/OpenDDS \
- && git clone --depth 1 -b $LASAGNE_VERSION git://github.com/LASAGNE-Open-Systems/LASAGNE-Core.git /opt/DAF
+ && git clone --depth 1 -b $LASAGNE_VERSION git://github.com/ConsiliumTechnology/LASAGNE-Core.git /opt/DAF
 
 # Setup environment variables
 
@@ -36,7 +36,7 @@ WORKDIR $TAF_ROOT
 RUN cp $DAF_ROOT/bin/build/ace/config.h $ACE_ROOT/ace/config.h \
  && cp $DAF_ROOT/bin/build/ace/default.features $ACE_ROOT/bin/MakeProjectCreator/config/default.features \
  && cp $DAF_ROOT/bin/build/ace/platform_macros.GNU $ACE_ROOT/include/makeinclude/platform_macros.GNU \
- && perl $ACE_ROOT/bin/mwc.pl -type gnuace -workers 2 TAF_CI.mwc \
+ && perl $ACE_ROOT/bin/mwc.pl -type gnuace -workers 2 TAF_CI_ODDS.mwc \
  && make --jobs 2
 
 ENTRYPOINT ["TAFServer"]
