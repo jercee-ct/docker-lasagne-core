@@ -33,9 +33,9 @@ ENV TAF_ROOT=$DAF_ROOT/TAF \
 
 WORKDIR $TAF_ROOT
 
-RUN cp $DAF_ROOT/bin/build/ace/config.h $ACE_ROOT/ace/config.h \
- && cp $DAF_ROOT/bin/build/ace/default.features $ACE_ROOT/bin/MakeProjectCreator/config/default.features \
- && cp $DAF_ROOT/bin/build/ace/platform_macros.GNU $ACE_ROOT/include/makeinclude/platform_macros.GNU \
+RUN sudo cp $DAF_ROOT/bin/build/ace/config.h $ACE_ROOT/ace/config.h \
+ && sudo cp $DAF_ROOT/bin/build/ace/default.features $ACE_ROOT/bin/MakeProjectCreator/config/default.features \
+ && sudo cp $DAF_ROOT/bin/build/ace/platform_macros.GNU $ACE_ROOT/include/makeinclude/platform_macros.GNU \
  && perl $ACE_ROOT/bin/mwc.pl -type gnuace -workers 2 TAF_CI_ODDS.mwc \
  && make --jobs 2
 
