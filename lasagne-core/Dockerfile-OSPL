@@ -18,7 +18,7 @@ RUN git clone --depth 1 -b ACE+TAO-6_5_5    git://github.com/DOCGroup/MPC.git /o
 
 # Download OSPL release and unpack.
 RUN wget https://github.com/ADLINK-IST/opensplice/releases/download/OSPL_V6_9_190925OSS_RELEASE/PXXX-VortexOpenSplice-6.9.190925OSS-HDE-x86_64.linux-gcc9-glibc2.27-installer.tar && \
- tar -C ~/ -xvf ./PXXX-VortexOpenSplice-6.9.190925OSS-HDE-x86_64.linux-gcc9-glibc2.27-installer.tar
+ tar -C ~/ -xvf /opt/PXXX-VortexOpenSplice-6.9.190925OSS-HDE-x86_64.linux-gcc9-glibc2.27-installer.tar
 
 # Setup environment variables
 
