@@ -2,7 +2,7 @@
 # Dockerfile for https://github.com/LASAGNE-Open-Systems/LASAGNE-Core
 #
 
-FROM ubuntu:18s.04
+FROM ubuntu:18.04
 
 ARG LASAGNE_VERSION=develop
 
@@ -17,17 +17,17 @@ RUN git clone --depth 1 -b ACE+TAO-6_5_5    git://github.com/DOCGroup/MPC.git /o
  && git clone --depth 1 -b $LASAGNE_VERSION git://github.com/ConsiliumTechnology/LASAGNE-Core.git /opt/DAF
 
 # Download OSPL release and unpack.
-RUN wget https://github.com/ADLINK-IST/opensplice/releases/download/OSPL_V6_9_190925OSS_RELEASE/PXXX-VortexOpenSplice-6.9.190925OSS-HDE-x86_64.linux-gcc9-glibc2.27-installer.tar && \
- tar -C /opt -xvf ./PXXX-VortexOpenSplice-6.9.190925OSS-HDE-x86_64.linux-gcc9-glibc2.27-installer.tar
+RUN wget https://github.com/ADLINK-IST/opensplice/releases/download/OSPL_V6_9_190925OSS_RELEASE/PXXX-VortexOpenSplice-6.9.190925OSS-HDE-x86.linux-gcc5.4.0-glibc2.23-installer.tar && \
+ tar -C /opt/ -xvf ./PXXX-VortexOpenSplice-6.9.190925OSS-HDE-x86.linux-gcc5.4.0-glibc2.23-installer.tar
 
 # Setup environment variables
 
 ENV MPC_ROOT=/opt/MPC \
     ACE_ROOT=/opt/ACE_TAO/ACE \
     TAO_ROOT=/opt/ACE_TAO/TAO \
-    OSPL_HOME=/opt/HDE/x86_64.linux  \
-    OSPL_URI=file:///opt/HDE/x86_64.linux/etc/config/ospl.xml \
-    DDS_ROOT=/opt/HDE/x86_64.linux \
+    OSPL_HOME=/opt/HDE/x86.linux  \
+    OSPL_URI=file:///$OSPL_HOME/etc/config/ospl.xml \
+    DDS_ROOT=$OSPL_HOME \
     DAF_ROOT=/opt/DAF
 
 ENV TAF_ROOT=$DAF_ROOT/TAF \
@@ -38,11 +38,10 @@ ENV TAF_ROOT=$DAF_ROOT/TAF \
 RUN sed -i "s/opensplice       = 0/opensplice = 1/g" $DAF_ROOT/MPC/config/TAF.features && \
  sed -i "s/opendds          = 1/opendds = 0/g" $DAF_ROOT/MPC/config/TAF.features
 
+RUN less $DAF_ROOT/MPC/config/TAF.features
+
 # Set a domain for OSPL
 RUN sed -i "s=<Id>0</Id>=<Id>1</Id>/=g" $OSPL_HOME/etc/config/ospl.xml
-
-# Not sure what this CORBA namespace is about but it gives us grief.s
-RUN sed -i "s=namespace CORBA {=namespace NOT_CORBA {=g" $OSPL_HOME/include/dcps/C++/SACPP/sacpp_dds_basic_types.h
 
 # build LASAGNE-Core
 
