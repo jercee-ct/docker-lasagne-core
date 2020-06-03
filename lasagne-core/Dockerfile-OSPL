@@ -2,7 +2,7 @@
 # Dockerfile for https://github.com/LASAGNE-Open-Systems/LASAGNE-Core
 #
 
-FROM ubuntu:16.04
+FROM ubuntu:18s.04
 
 ARG LASAGNE_VERSION=develop
 
